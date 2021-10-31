@@ -1,20 +1,14 @@
 package com.codingwithrufat.deliveryapplication.fragments
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
-import kotlinx.android.synthetic.main.fragment_register.view.*
 
 
-
-
-
-class RegisterFragment : Fragment() {
+class ResetPasswordFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,20 +22,7 @@ class RegisterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_register, container, false)
-
-        initializeWidgets(view)
-
-        return view
-    }
-
-    private fun initializeWidgets(view: View){
-
-        view.txtSignIn.setOnClickListener {
-            Navigation.findNavController(it).navigate(R.id.action_registerFragment_to_verificationFragment)
-        }
-
-
+        return inflater.inflate(R.layout.fragment_reset_password, container, false)
     }
 
 }

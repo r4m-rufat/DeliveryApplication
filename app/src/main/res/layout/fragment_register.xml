@@ -19,7 +19,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerVertical="true"
         android:orientation="vertical">
 
         <TextView
@@ -67,7 +67,7 @@
             android:textColorHint="@color/gray"
             app:boxStrokeColor="@color/purple_500"
             app:hintTextColor="@color/gray"
-            app:startIconDrawable="@drawable/ic_lock"
+            app:startIconDrawable="@drawable/ic_person"
             app:startIconTint="@color/selector_edit_text">
 
             <com.google.android.material.textfield.TextInputEditText
