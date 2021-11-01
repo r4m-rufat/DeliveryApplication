@@ -3,9 +3,21 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sign_in_with_google">Sign In With Google</string>
-    <string name="already_have_an_account">Already have an account</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="do_not_have_an_account">"Don't have an account?"</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="otp_verification">OTP Verification</string>
+    <string name="enter_otp_verification">"Enter the OTP sent to "</string>
+    <string name="do_not_recieve_opt">"Don't receive the OPT? "</string>
+    <string name="bt_resend">RESEND OTP</string>
+    <string name="verify_proced"><![CDATA[Verify & Proceed]]></string>
+    <string name="enter_phone_number">"   Enter the phone number                                           associated with your account."</string>
+    <string name="we_will_send">"     We will send a verification code to reset your password. "</string>
+    <string name="enter_phonenumber">Enter phone number</string>
+    <string name="send">Send</string>
 
     <string-array name="spinner_items">
         <item>Client</item>
