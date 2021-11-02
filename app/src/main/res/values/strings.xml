@@ -13,11 +13,13 @@
     <string name="enter_otp_verification">"Enter the OTP sent to "</string>
     <string name="do_not_recieve_opt">"Don't receive the OPT? "</string>
     <string name="bt_resend">RESEND OTP</string>
-    <string name="verify_proced"><![CDATA[Verify & Proceed]]></string>
+    <string name="verify_proceed"><![CDATA[Verify & Proceed]]></string>
     <string name="enter_phone_number">"   Enter the phone number                                           associated with your account."</string>
     <string name="we_will_send">"     We will send a verification code to reset your password. "</string>
     <string name="enter_phonenumber">Enter phone number</string>
     <string name="send">Send</string>
+    <string name="clients">Clients</string>
+    <string name="couriers">Couriers</string>
 
     <string-array name="spinner_items">
         <item>Client</item>

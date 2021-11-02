@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "884700412293",
+    "project_id": "deliveryapplication-f29c7",
+    "storage_bucket": "deliveryapplication-f29c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884700412293:android:5c4c1672be6e36bb0f6cec",
+        "android_client_info": {
+          "package_name": "com.codingwithrufat.deliveryapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "884700412293-c8vmo8er5lvrm79hn7vsbqr80qrova10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2xmmsdc3ybh6AeRBDmC3sUlbd_fH2KEc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "884700412293-c8vmo8er5lvrm79hn7vsbqr80qrova10.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

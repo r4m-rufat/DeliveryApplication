@@ -45,6 +45,7 @@
                 android:gravity="center_horizontal"
                 />
             <TextView
+                android:id="@+id/txt_phone_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+994 5067499999"
@@ -56,13 +57,13 @@
         </LinearLayout>
 
         <com.alimuzaffar.lib.pin.PinEntryEditText
-            android:id="@+id/txt_pin_entry"
+            android:id="@+id/etxt_pin_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cursorVisible="false"
             android:digits="1234567890"
             android:inputType="number"
-            android:maxLength="4"
+            android:maxLength="6"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
             android:textSize="20sp"
@@ -94,15 +95,18 @@
             android:text="@string/bt_resend"/>
 
     </LinearLayout>
+
         <Button
+            android:id="@+id/button_verifyProceed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/purple_500"
             android:paddingBottom="7dp"
             android:textSize="17sp"
             android:paddingTop="7dp"
-            android:text="@string/verify_proced"
+            android:text="@string/verify_proceed"
             android:layout_margin="20dp"/>
+
     </LinearLayout>
 
 

@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id "kotlin-android-extensions"
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -47,7 +48,13 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
 
-    //pinenryedittext
+    // Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth:21.0.1'
+
+    // Firebase Firestore
+    implementation 'com.google.firebase:firebase-firestore:24.0.0'
+
+    // PinEntryEditText
     implementation 'com.alimuzaffar.lib:pinentryedittext:2.0.6'
 
 }
