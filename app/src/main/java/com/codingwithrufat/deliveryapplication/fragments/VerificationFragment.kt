@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
 import com.codingwithrufat.deliveryapplication.models.users.User
 import com.codingwithrufat.deliveryapplication.utils.constants.ONE_MINUTE_TIME
@@ -16,6 +17,7 @@ import com.codingwithrufat.deliveryapplication.utils.constants.TAG
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.fragment_register.view.*
 import kotlinx.android.synthetic.main.fragment_verification.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -31,6 +33,7 @@ class VerificationFragment : Fragment() {
     private var password: String? = null
     private var phone_number: String? = null
     private var type: String? = null
+    private var is_coming_from_reset_fragment: Boolean? = null
 
     // objects
     private var firebaseAuth: FirebaseAuth? = null
@@ -40,11 +43,19 @@ class VerificationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            verificationID = it.getString("verificationID")
-            username = it.getString("username")
-            phone_number = it.getString("phone_number")
-            password = it.getString("password")
-            type = it.getString("type")
+
+            is_coming_from_reset_fragment = it.getBoolean("is_coming_from_reset_fragment")
+            if (is_coming_from_reset_fragment!!){
+                verificationID = it.getString("verificationID")
+                type = it.getString("type")
+                phone_number = it.getString("phone_number")
+            }else{
+                verificationID = it.getString("verificationID")
+                username = it.getString("username")
+                phone_number = it.getString("phone_number")
+                password = it.getString("password")
+                type = it.getString("type")
+            }
         }
     }
 
@@ -69,7 +80,11 @@ class VerificationFragment : Fragment() {
 
     private fun clickedVerifyProceedButton(view: View) {
         view.button_verifyProceed.setOnClickListener {
-            verifyPhoneNumberWithCode(verificationID, view.etxt_pin_entry.text.toString())
+            if (is_coming_from_reset_fragment!!){
+
+            }else{
+                verifyPhoneNumberWithCode(verificationID, view.etxt_pin_entry.text.toString()) // coming from sign up page
+            }
         }
     }
 
@@ -88,7 +103,7 @@ class VerificationFragment : Fragment() {
                         type
                     )
 
-                    if (type.equals(getString(R.string.clients))) {
+                    if (type.equals("Client")) {
                         firebaseFirestore.collection(getString(R.string.clients))
                             .document(id)
                             .set(user)
@@ -99,7 +114,7 @@ class VerificationFragment : Fragment() {
                                 Log.d(TAG, "signInWithPhoneAuthCredential: Error is ${it.message}")
                             }
                     } else {
-                        firebaseFirestore.collection(getString(R.string.couriers))
+                        firebaseFirestore.collection("Courier")
                             .document(id)
                             .set(user)
                             .addOnSuccessListener {
@@ -119,6 +134,30 @@ class VerificationFragment : Fragment() {
                 }
             }
     }
+
+    private fun verifyPhoneNumber(view: View, credential: PhoneAuthCredential) {
+        firebaseAuth!!.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+
+                    val bundle = Bundle()
+                    bundle.putString("phone_number", phone_number)
+                    bundle.putString("type", type)
+                    bundle.putBoolean("is_coming_from_verification_fragment", true)
+                    Navigation.findNavController(view).navigate(R.id.action_verificationFragment_to_resetPasswordFragment)
+
+                } else {
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        Toast.makeText(context, "Verification code is invalid", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 
 
     private fun clickedResendOTP(view: View) {
@@ -186,7 +225,7 @@ class VerificationFragment : Fragment() {
             }
 
             override fun onVerificationFailed(exception: FirebaseException) {
-                Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "${exception.message}", Toast.LENGTH_SHORT).show()
             }
 
             override fun onCodeSent(

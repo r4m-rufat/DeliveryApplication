@@ -2,6 +2,8 @@ package com.codingwithrufat.deliveryapplication.utils.conditions
 
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_register.view.*
+import kotlinx.android.synthetic.main.fragment_register.view.edit_phone_number
+import kotlinx.android.synthetic.main.fragment_reset_password.view.*
 
 fun checkingRegistrationFields(
     view: View,
@@ -31,5 +33,37 @@ fun checkingRegistrationFields(
     }
 
     return boolNumber && boolUsername && boolPassword
+
+}
+
+fun checkChangePasswordFields(
+    view: View,
+    new_password: String,
+    confirm_password: String
+): Boolean{
+
+    var bool_new_password = false
+    var bool_confirm_password = false
+    var bool_matches = false
+
+    if (new_password.length >= 6){
+        bool_new_password = true
+    }else{
+        view.edit_new_password.setError("Password must be 6 and more characters")
+    }
+
+    if (confirm_password.length >= 6){
+        bool_confirm_password = true
+    }else{
+        view.edit_confirm_password.setError("Password must be 6 and more characters")
+    }
+
+    if (new_password == confirm_password){
+        bool_matches = true
+    }else{
+        view.edit_confirm_password.setError("Password doesn't match with another password")
+    }
+
+    return bool_confirm_password && bool_new_password && bool_matches
 
 }

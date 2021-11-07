@@ -25,10 +25,10 @@ class LoginFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view =inflater.inflate(R.layout.fragment_login, container, false)
-        initializeWidgets(view)
+        clickedTexts(view)
         return view
     }
-    private fun initializeWidgets(view: View){
+    private fun clickedTexts(view: View){
 
         view.txtSignup.setOnClickListener {
             Navigation.findNavController(it).navigate(R.id.action_loginFragment_to_registerFragment)
@@ -36,6 +36,22 @@ class LoginFragment : Fragment() {
         view.bt_forget_password.setOnClickListener {
             Navigation.findNavController(it).navigate(R.id.action_loginFragment_to_resetPasswordFragment)
         }
+
+    }
+
+    private fun clickedLoginButton(view: View){
+
+        view.button_login.setOnClickListener {
+
+
+
+        }
+
+    }
+
+    private fun checkLoginFields(){
+
+
 
     }
 

@@ -85,6 +85,8 @@ class RegisterFragment : Fragment() {
                     bundle.putString("phone_number", phoneNumber)
                     bundle.putString("password", password)
                     bundle.putString("type", view.spinner.selectedItem.toString())
+                    bundle.putBoolean("is_coming_from_verification_fragment", false)
+                    bundle.putBoolean("is_coming_from_reset_fragment", false)
                     Navigation.findNavController(view)
                         .navigate(R.id.action_registerFragment_to_verificationFragment, bundle)
                 }

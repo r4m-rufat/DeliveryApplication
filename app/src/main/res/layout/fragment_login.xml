@@ -49,7 +49,7 @@
             app:startIconTint="@color/selector_edit_text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_username"
+                android:id="@+id/edit_username_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="phone|text" />
@@ -74,7 +74,7 @@
             app:startIconTint="@color/selector_edit_text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_password"
+                android:id="@+id/edit_password_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
