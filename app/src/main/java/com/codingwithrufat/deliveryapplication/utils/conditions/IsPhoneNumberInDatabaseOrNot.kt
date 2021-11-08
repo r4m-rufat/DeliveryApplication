@@ -13,7 +13,11 @@ fun isPhoneNumberInDatabaseOrNot(
         .whereEqualTo("phone_number", phoneNumber)
         .get()
         .addOnSuccessListener {
-            isInDB()
+            if (!it.isEmpty){
+                isInDB()
+            }else{
+                isNotInDB()
+            }
         }.addOnFailureListener {
             isNotInDB()
         }
