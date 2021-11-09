@@ -69,8 +69,16 @@ class VerificationFragment : Fragment() {
         setPhoneNumber(view)
         clickedResendOTP(view)
         countdownTimer(view)
+        clickedbackFromVerification(view)
 
         return view
+    }
+
+    private fun clickedbackFromVerification(view: View) {
+           view.ic_backFromVerification.setOnClickListener {
+               Navigation.findNavController(it)
+                   .navigate(R.id.action_verificationFragment_to_registerFragment)
+           }
     }
 
     private fun clickedVerifyProceedButton(view: View) {

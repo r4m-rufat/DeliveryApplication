@@ -35,7 +35,14 @@ class LoginFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         clickedTexts(view)
         clickedLoginButton(view)
+        clickedbackfromLogin(view)
         return view
+    }
+    private fun clickedbackfromLogin(view:View){
+        view.ic_backFromLogin.setOnClickListener {
+            Navigation.findNavController(it)
+                .navigate(R.id.action_loginFragment_to_registerFragment)
+        }
     }
 
     private fun clickedTexts(view: View) {

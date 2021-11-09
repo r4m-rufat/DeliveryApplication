@@ -44,6 +44,7 @@ class RegisterFragment : Fragment() {
         clickedSignInButton(view)
         clickedSignUpButton(view)
 
+
         return view
     }
 
