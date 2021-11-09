@@ -3,6 +3,8 @@ package com.codingwithrufat.deliveryapplication.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -53,11 +55,15 @@ class RegisterFragment : Fragment() {
             val type = view.spinner.selectedItem.toString()
 
             if (checkingRegistrationFields(view, phoneNumber, username, password)) {
+
+                view.rel_progress_register.visibility = VISIBLE
+
                 isPhoneNumberInDatabaseOrNot(
                     db,
                     phoneNumber,
                     "${type}s",
                     isInDB = {
+                        view.rel_progress_register.visibility = INVISIBLE
                         Toast.makeText(
                             requireContext(),
                             "There is an account with this phone number",
@@ -96,11 +102,11 @@ class RegisterFragment : Fragment() {
 
             val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                    Toast.makeText(context, "verification completed", Toast.LENGTH_SHORT).show()
                     signInWithCredential(p0)
                 }
 
                 override fun onVerificationFailed(exception: FirebaseException) {
+                    view.rel_progress_register.visibility = INVISIBLE
                     Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
                 }
 

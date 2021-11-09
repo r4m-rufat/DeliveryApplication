@@ -197,4 +197,34 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_or_black"
+        android:visibility="invisible"
+        android:id="@+id/rel_progress_login">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/progress_login"
+            style="@style/SpinKitView.Large.ThreeBounce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:SpinKit_Color="@color/purple_500" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_condition_login"
+            android:layout_below="@+id/progress_login"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Your account information is checking. \n Please wait..."/>
+
+    </RelativeLayout>
+
 </RelativeLayout>

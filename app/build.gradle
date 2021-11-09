@@ -57,4 +57,7 @@ dependencies {
     // PinEntryEditText
     implementation 'com.alimuzaffar.lib:pinentryedittext:2.0.6'
 
+    // progress dialog
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+
 }

@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
 class ResetPasswordFragment : Fragment() {
 
     // variables
-    private var is_coming_from_verification_fragment: Boolean? = null
+    private var is_coming_from_verification_fragment: Boolean? = false
     private var phone_number: String? = null
     private var type: String? = null
 
@@ -88,7 +88,10 @@ class ResetPasswordFragment : Fragment() {
             if (checkChangePasswordFields(
                     view,
                     new_password, confirm_password
-                )){
+                )
+            ) {
+                view.txt_condition_resetPassword.text = "Password is changing..."
+                view.rel_progress_resetPassword.visibility = View.VISIBLE
                 updatePasswordInDatabase(view, new_password)
             }
 
@@ -98,12 +101,12 @@ class ResetPasswordFragment : Fragment() {
 
     private fun updatePasswordInDatabase(view: View, password: String) {
 
-        db.collection(type!!)
+        db.collection("${type}s")
             .whereEqualTo("phone_number", phone_number)
             .get()
             .addOnCompleteListener { task ->
                 var uid = ""
-                if (task.isSuccessful) {
+                if (task.isSuccessful && !task.result!!.isEmpty) {
                     for (querySnapshot in task.result!!) {
 
                         uid = querySnapshot.getString("id").toString()
@@ -111,9 +114,11 @@ class ResetPasswordFragment : Fragment() {
                     }
 
                     val hashMap = HashMap<String, Any>()
-                    hashMap["password"] = view.edit_new_password.text.toString()
+                    hashMap["password"] = password
 
-                    db.collection(type!!)
+                    Toast.makeText(context, "$uid", Toast.LENGTH_SHORT).show()
+
+                    db.collection("${type}s")
                         .document(uid)
                         .update(hashMap)
                         .addOnSuccessListener {
@@ -130,6 +135,9 @@ class ResetPasswordFragment : Fragment() {
                             ).show()
                         }
 
+                    view.rel_progress_resetPassword.visibility =
+                        View.INVISIBLE // after changed password
+
                 }
             }
 
@@ -144,14 +152,17 @@ class ResetPasswordFragment : Fragment() {
 
             if (phoneNumber.length == 9) { // the length of Azerbaijan numbers is 9
 
+                view.rel_progress_resetPassword.visibility = View.VISIBLE
+
                 isPhoneNumberInDatabaseOrNot(
                     db,
                     phoneNumber,
-                    spinnerItem,
+                    "${spinnerItem}s", // in db collection is Clients
                     isInDB = {
                         authenticatePhoneNumber(view, phoneNumber)
                     },
                     isNotInDB = {
+                        view.rel_progress_resetPassword.visibility = View.INVISIBLE
                         Toast.makeText(
                             requireContext(),
                             "There is no account with this phone number!",
@@ -172,6 +183,7 @@ class ResetPasswordFragment : Fragment() {
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                view.rel_progress_resetPassword.visibility = View.INVISIBLE
                 signInWithCredential(credential)
             }
 

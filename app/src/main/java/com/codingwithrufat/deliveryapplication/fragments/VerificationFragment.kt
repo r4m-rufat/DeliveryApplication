@@ -17,7 +17,6 @@ import com.codingwithrufat.deliveryapplication.utils.constants.TAG
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.fragment_register.view.*
 import kotlinx.android.synthetic.main.fragment_verification.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -45,17 +44,13 @@ class VerificationFragment : Fragment() {
         arguments?.let {
 
             is_coming_from_reset_fragment = it.getBoolean("is_coming_from_reset_fragment")
-            if (is_coming_from_reset_fragment!!){
-                verificationID = it.getString("verificationID")
-                type = it.getString("type")
-                phone_number = it.getString("phone_number")
-            }else{
-                verificationID = it.getString("verificationID")
+            if (!is_coming_from_reset_fragment!!) {
                 username = it.getString("username")
-                phone_number = it.getString("phone_number")
                 password = it.getString("password")
-                type = it.getString("type")
             }
+            verificationID = it.getString("verificationID")
+            type = it.getString("type")
+            phone_number = it.getString("phone_number")
         }
     }
 
@@ -80,15 +75,25 @@ class VerificationFragment : Fragment() {
 
     private fun clickedVerifyProceedButton(view: View) {
         view.button_verifyProceed.setOnClickListener {
-            if (is_coming_from_reset_fragment!!){
+            view.rel_progress_verification.visibility = View.VISIBLE
+            if (is_coming_from_reset_fragment!!) {
+                val credential = PhoneAuthProvider.getCredential(
+                    verificationID!!,
+                    view.etxt_pin_entry.text.toString()
+                )
+                verifyPhoneNumber(view, credential)
 
-            }else{
-                verifyPhoneNumberWithCode(verificationID, view.etxt_pin_entry.text.toString()) // coming from sign up page
+            } else {
+                verifyPhoneNumberWithCode(
+                    view,
+                    verificationID,
+                    view.etxt_pin_entry.text.toString()
+                ) // coming from sign up page
             }
         }
     }
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+    private fun signInWithPhoneAuthCredential(view: View, credential: PhoneAuthCredential) {
         firebaseAuth!!.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -114,7 +119,7 @@ class VerificationFragment : Fragment() {
                                 Log.d(TAG, "signInWithPhoneAuthCredential: Error is ${it.message}")
                             }
                     } else {
-                        firebaseFirestore.collection("Courier")
+                        firebaseFirestore.collection(getString(R.string.couriers))
                             .document(id)
                             .set(user)
                             .addOnSuccessListener {
@@ -125,9 +130,11 @@ class VerificationFragment : Fragment() {
                             }
                     }
 
+                    view.rel_progress_verification.visibility = View.INVISIBLE
 
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        view.rel_progress_verification.visibility = View.INVISIBLE
                         Toast.makeText(context, "verification code is invalid", Toast.LENGTH_SHORT)
                             .show()
                     }
@@ -140,13 +147,17 @@ class VerificationFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
 
+                    view.rel_progress_verification.visibility = View.INVISIBLE
+
                     val bundle = Bundle()
                     bundle.putString("phone_number", phone_number)
                     bundle.putString("type", type)
                     bundle.putBoolean("is_coming_from_verification_fragment", true)
-                    Navigation.findNavController(view).navigate(R.id.action_verificationFragment_to_resetPasswordFragment)
+                    Navigation.findNavController(view)
+                        .navigate(R.id.action_verificationFragment_to_resetPasswordFragment, bundle)
 
                 } else {
+                    view.rel_progress_verification.visibility = View.INVISIBLE
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         Toast.makeText(context, "Verification code is invalid", Toast.LENGTH_SHORT)
                             .show()
@@ -154,10 +165,10 @@ class VerificationFragment : Fragment() {
                 }
             }
             .addOnFailureListener {
+                view.rel_progress_verification.visibility = View.INVISIBLE
                 Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
     }
-
 
 
     private fun clickedResendOTP(view: View) {
@@ -175,7 +186,7 @@ class VerificationFragment : Fragment() {
 
     }
 
-    private fun countdownTimer(view: View){
+    private fun countdownTimer(view: View) {
         val ms = SECOND_MS
         var counter = ONE_MINUTE_TIME
 
@@ -194,7 +205,8 @@ class VerificationFragment : Fragment() {
                 view.txt_resend_otp.text = "00:$counter"
 
                 if (counter == 0) {
-                    view.txt_resend_otp.text = getString(R.string.bt_resend) // if counter time is finished then text is set
+                    view.txt_resend_otp.text =
+                        getString(R.string.bt_resend) // if counter time is finished then text is set
 
                     view.txt_resend_otp.typeface = Typeface.DEFAULT // changed again to default
                 }
@@ -206,11 +218,11 @@ class VerificationFragment : Fragment() {
         }
     }
 
-    private fun verifyPhoneNumberWithCode(verificationId: String?, code: String) {
+    private fun verifyPhoneNumberWithCode(view: View, verificationId: String?, code: String) {
         // [START verify_with_code]
         val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
         // [END verify_with_code]
-        signInWithPhoneAuthCredential(credential)
+        signInWithPhoneAuthCredential(view, credential)
     }
 
     private fun setPhoneNumber(view: View) {

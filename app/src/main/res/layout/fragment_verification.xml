@@ -1,116 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".fragments.VerificationFragment">
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:backgroundTint="@android:color/transparent"
-        android:src="@drawable/ic_backspace" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:gravity="center"
         android:orientation="vertical">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/ic_backspace" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/otp_verification"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="50dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/enter_otp_verification"
+                    android:textColor="@color/black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/txt_phone_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="+994 5067499999"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <com.alimuzaffar.lib.pin.PinEntryEditText
+                android:id="@+id/etxt_pin_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:cursorVisible="false"
+                android:digits="1234567890"
+                android:inputType="number"
+                android:maxLength="6"
+                android:textIsSelectable="false"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:pinLineColors="@color/purple_500"
+                app:pinLineStrokeSelected="4dp"
+                app:pinTextBottomPadding="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/do_not_recieve_opt"
+                    android:textColor="@color/black"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/txt_resend_otp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bt_resend"
+                    android:textColor="@color/purple_500"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_verifyProceed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:backgroundTint="@color/purple_500"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
+                android:text="@string/verify_proceed"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_or_black"
+        android:visibility="invisible"
+        android:id="@+id/rel_progress_verification">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/progress_verification"
+            style="@style/SpinKitView.Large.ThreeBounce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:SpinKit_Color="@color/purple_500" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/otp_verification"
-            android:textColor="@color/black"
+            android:id="@+id/txt_condition_register"
+            android:layout_below="@+id/progress_verification"
+            android:textColor="@color/white"
+            android:textAlignment="center"
             android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="50dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/enter_otp_verification"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
-
-            <TextView
-                android:id="@+id/txt_phone_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="+994 5067499999"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <com.alimuzaffar.lib.pin.PinEntryEditText
-            android:id="@+id/etxt_pin_entry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:cursorVisible="false"
-            android:digits="1234567890"
-            android:inputType="number"
-            android:maxLength="6"
-            android:textIsSelectable="false"
-            android:textSize="20sp"
             android:textStyle="bold"
-            android:visibility="visible"
-            app:pinLineColors="@color/purple_500"
-            app:pinLineStrokeSelected="4dp"
-            app:pinTextBottomPadding="10dp" />
+            android:text="Your phone number is verifying..."/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/do_not_recieve_opt"
-                android:textColor="@color/black"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/txt_resend_otp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/bt_resend"
-                android:textColor="@color/purple_500"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/button_verifyProceed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:backgroundTint="@color/purple_500"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"
-            android:text="@string/verify_proceed"
-            android:textSize="17sp" />
-
-    </LinearLayout>
+    </RelativeLayout>
 
 
-</LinearLayout>
+
+</RelativeLayout>

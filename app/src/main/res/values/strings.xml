@@ -18,10 +18,10 @@
     <string name="enter_phone_number">Enter phone number</string>
     <string name="send">Send</string>
     <string name="clients">Clients</string>
-    <string name="couriers">Couriers</string>
     <string name="number_format_wrong">Number format is wrong</string>
     <string name="new_password">New Password</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="couriers">Couriers</string>
 
     <string-array name="spinner_items">
         <item>Client</item>
