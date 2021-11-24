@@ -57,7 +57,10 @@ dependencies {
     // Firebase Firestore
     implementation 'com.google.firebase:firebase-firestore:24.0.0'
 
+    // Map Service
     implementation 'com.google.android.gms:play-services-maps:18.0.0'
+    implementation 'com.google.android.gms:play-services-gcm:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     // PinEntryEditText
     implementation 'com.alimuzaffar.lib:pinentryedittext:2.0.6'
