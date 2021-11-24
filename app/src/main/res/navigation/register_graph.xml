@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.codingwithrufat.deliveryapplication.fragments.RegisterFragment"
+        android:name="com.codingwithrufat.deliveryapplication.fragments.registration.RegisterFragment"
         android:label="RegisterFragment">
 
         <action
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.codingwithrufat.deliveryapplication.fragments.LoginFragment"
+        android:name="com.codingwithrufat.deliveryapplication.fragments.registration.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
 
@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/verificationFragment"
-        android:name="com.codingwithrufat.deliveryapplication.fragments.VerificationFragment"
+        android:name="com.codingwithrufat.deliveryapplication.fragments.registration.VerificationFragment"
         android:label="fragment_verification"
         tools:layout="@layout/fragment_verification" >
 
@@ -54,7 +54,7 @@
 
     <fragment
         android:id="@+id/resetPasswordFragment"
-        android:name="com.codingwithrufat.deliveryapplication.fragments.ResetPasswordFragment"
+        android:name="com.codingwithrufat.deliveryapplication.fragments.registration.ResetPasswordFragment"
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password" >
 

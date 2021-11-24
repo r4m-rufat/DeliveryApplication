@@ -1,4 +1,4 @@
-package com.codingwithrufat.deliveryapplication.fragments
+package com.codingwithrufat.deliveryapplication.fragments.registration
 
 import android.graphics.Typeface
 import android.os.Bundle
