@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/drawable/background_for_map_icon.xml" value="0.14791666666666667" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/drawable/ic_google.xml" value="0.290625" />
+        <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/drawable/ic_motorcycle.xml" value="0.136" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/drawable/selector_for_edit_password.xml" value="0.23425925925925925" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/activity_client.xml" value="0.20885416666666667" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/activity_main.xml" value="0.27447916666666666" />

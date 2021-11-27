@@ -1,5 +1,6 @@
 package com.codingwithrufat.deliveryapplication.fragments.registration
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
+import com.codingwithrufat.deliveryapplication.activities.ClientActivity
 import com.codingwithrufat.deliveryapplication.utils.conditions.checkLoginFields
 import com.codingwithrufat.deliveryapplication.utils.conditions.isPhoneNumberInDatabaseOrNot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -72,7 +74,7 @@ class LoginFragment : Fragment() {
                 isPhoneNumberInDatabaseOrNot(
                     db,
                     phone_number,
-                    type,
+                    "${type}s",
                     isInDB = {
 
                         db.collection("${type}s")
@@ -83,7 +85,8 @@ class LoginFragment : Fragment() {
 
                                 if (task.isSuccessful && !task.result!!.isEmpty) {
 
-                                    // TODO pass the next page (Home Page)
+                                    startActivity(Intent(requireContext(), ClientActivity::class.java))
+                                    requireActivity().finish()
 
                                 } else {
                                     Toast.makeText(
