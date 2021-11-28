@@ -1,33 +1,24 @@
 package com.codingwithrufat.deliveryapplication.fragments.clients
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.NumberPicker
 import android.widget.Toast
-import androidx.annotation.ColorRes
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import com.codingwithrufat.deliveryapplication.R
+import com.codingwithrufat.deliveryapplication.models.users_detail.ClientDetail
+import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
 import com.codingwithrufat.deliveryapplication.utils.constants.MAP_REQUEST_CODE
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -110,14 +101,18 @@ class ClientMapFragment : Fragment(), OnMapReadyCallback{
         }
     }
 
-    private fun getClientLatLongFromDB(){
+    private fun getCourierLatLongFromDB(onComingCourierData: (list: MutableList<CourierDetail>) -> Unit){
 
         reference.child("Couriers")
             .addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
 
                     if (snapshot.exists()){
-
+                        var list = mutableListOf<CourierDetail>()
+                        snapshot.children.forEach { singleSnapshot ->
+                            list.add(singleSnapshot.getValue(CourierDetail::class.java)!!)
+                        }
+                        onComingCourierData(list)
                     }
 
                 }
@@ -131,15 +126,23 @@ class ClientMapFragment : Fragment(), OnMapReadyCallback{
     }
 
     override fun onMapReady(map: GoogleMap) {
-        val baku = LatLng(40.4, 49.8)
-        map.addMarker(
-            MarkerOptions()
-                .position(baku)
-                .title("Courier")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_motorcycle))
-                .rotation(currentLocation.bearing) // rotate icon to the destination
-        )
+        map.isIndoorEnabled = false
+        map.isBuildingsEnabled = false
+        map.isTrafficEnabled = true
 
+        getCourierLatLongFromDB { list ->
+
+            list.forEach {
+                map.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(it.courier_latitude!!.toDouble(), it.courier_longitude!!.toDouble()))
+                        .title("Courier")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_motorcycle))
+                        .rotation(currentLocation.bearing) // rotate icon to the destination
+                )
+            }
+
+        }
         map.addMarker(
             MarkerOptions()
                 .position(LatLng(currentLocation.latitude, currentLocation.longitude))

@@ -16,10 +16,10 @@
         android:theme="@style/Theme.DeliveryApplication"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activities.ClientActivity"
+            android:name=".activities.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.ClientActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
