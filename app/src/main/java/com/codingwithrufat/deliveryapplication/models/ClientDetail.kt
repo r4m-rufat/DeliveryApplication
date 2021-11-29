@@ -1,6 +1,6 @@
 package com.codingwithrufat.deliveryapplication.models
 
-data class Clients(
+data class ClientDetail(
     var client_id:String?,
     var client_latitude:Double?,
     var client_longitude:Double?,

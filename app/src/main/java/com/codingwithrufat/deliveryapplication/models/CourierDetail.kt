@@ -2,7 +2,7 @@ package com.codingwithrufat.deliveryapplication.models
 
 
 
-data class Couriers(
+data class CourierDetail(
     var courier_id:String?,
     var courier_latitude: Double?,
     var courier_longitude:Double?,

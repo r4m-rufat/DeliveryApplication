@@ -10,12 +10,17 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
+import com.codingwithrufat.deliveryapplication.utils.location.FindCurrentLocation
+import com.codingwithrufat.deliveryapplication.models.ClientDetail
+import com.codingwithrufat.deliveryapplication.models.CourierDetail
 import com.codingwithrufat.deliveryapplication.models.users.User
 import com.codingwithrufat.deliveryapplication.utils.constants.ONE_MINUTE_TIME
 import com.codingwithrufat.deliveryapplication.utils.constants.SECOND_MS
 import com.codingwithrufat.deliveryapplication.utils.constants.TAG
+import com.codingwithrufat.deliveryapplication.utils.prefence.MyPrefence
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_verification.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -33,12 +38,24 @@ class VerificationFragment : Fragment() {
     private var phone_number: String? = null
     private var type: String? = null
     private var is_coming_from_reset_fragment: Boolean? = null
+    //variables for courier database
+    private var courier_latitude:Double?=null
+    private var courier_longitude:Double?=null
+    private var busy :Boolean?=false
+    private var food_id:String?=null
+    private var destination_latitude:Double?=null
+    private var destination_longitude:Double?=null
+    //variables for client database
+    private var food_id_list:List<String>?=null
+    var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    var data_ref=firebaseDatabase.reference
 
     // objects
     private var firebaseAuth: FirebaseAuth? = null
     private lateinit var firebaseFirestore: FirebaseFirestore
     private lateinit var firebaseUser: FirebaseUser
-
+    private lateinit var mylocation: FindCurrentLocation
+    private  lateinit var prefence: MyPrefence
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -64,6 +81,8 @@ class VerificationFragment : Fragment() {
         // initialize
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseFirestore = FirebaseFirestore.getInstance()
+        mylocation= FindCurrentLocation(context)
+        prefence= MyPrefence(context)
 
         clickedVerifyProceedButton(view)
         setPhoneNumber(view)
@@ -117,26 +136,31 @@ class VerificationFragment : Fragment() {
                     )
 
                     if (type.equals("Client")) {
+
                         firebaseFirestore.collection(getString(R.string.clients))
                             .document(id)
                             .set(user)
                             .addOnSuccessListener {
                                 Log.d(TAG, "signInWithPhoneAuthCredential: Task is successful")
+                                data_setclients()
                             }
                             .addOnFailureListener {
                                 Log.d(TAG, "signInWithPhoneAuthCredential: Error is ${it.message}")
                             }
                     } else {
+
                         firebaseFirestore.collection(getString(R.string.couriers))
                             .document(id)
                             .set(user)
                             .addOnSuccessListener {
                                 Log.d(TAG, "signInWithPhoneAuthCredential: Task is successful")
+                                data_setcouriers()
                             }
                             .addOnFailureListener {
                                 Log.d(TAG, "signInWithPhoneAuthCredential: Error is ${it.message}")
                             }
                     }
+
 
                     view.rel_progress_verification.visibility = View.INVISIBLE
 
@@ -149,6 +173,69 @@ class VerificationFragment : Fragment() {
                 }
             }
     }
+
+    private fun data_setclients() {
+        val client_id=firebaseAuth?.currentUser?.uid
+        mylocation.fetch(context)
+        val client_latitude=prefence.getString("latitude")?.toDouble()
+        val client_longitude=prefence.getString("longitude")?.toDouble()
+        food_id_list= listOf("")
+        if (client_latitude != null && client_longitude!=null) {
+            val  clients= ClientDetail(
+                client_id,
+                client_latitude,
+                client_longitude,
+                food_id_list
+            )
+            data_ref.child("Clients").child(client_id.toString()).setValue(clients).addOnCompleteListener { task->
+                if (task.isSuccessful){
+                    Log.d(TAG,"Successfully set")
+                }
+                else{
+                    Log.d(TAG,task.exception.message.toString())
+                }
+            }
+            }
+
+
+
+    }
+
+
+    private fun data_setcouriers() {
+
+            val courier_id=firebaseAuth?.currentUser?.uid
+             mylocation.fetch(context)
+            courier_latitude=prefence.getString("latitude")?.toDouble()
+            courier_longitude=prefence.getString("longitude")?.toDouble()
+            food_id=""
+            destination_latitude=0.0
+            destination_longitude=0.0
+
+            if (courier_latitude!=null && courier_longitude!=null){
+                val couriers= CourierDetail(
+                    courier_id,
+                    courier_latitude,
+                    courier_longitude,
+                    busy,
+                    food_id,
+                    destination_latitude,
+                    destination_longitude
+                )
+                data_ref.child("Couriers").child(courier_id.toString()).setValue(couriers).addOnCompleteListener{ task->
+                    if (task.isSuccessful){
+                        Log.d("TAG","Successfully set")
+                    }
+                    else{
+                        Log.d("TAG",task.exception.message.toString())
+                    }
+
+                }
+            }
+
+        }
+
+
 
     private fun verifyPhoneNumber(view: View, credential: PhoneAuthCredential) {
         firebaseAuth!!.signInWithCredential(credential)
@@ -272,14 +359,9 @@ class VerificationFragment : Fragment() {
 
         FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-
                 firebaseUser = it.result!!.user!!
-
             } else {
-
-                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
-
-            }
+                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show() }
         }
     }
 

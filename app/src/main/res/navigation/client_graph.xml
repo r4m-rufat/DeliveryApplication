@@ -3,12 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/client_graph"
-    app:startDestination="@id/clientMapFragment">
-
+    app:startDestination="@id/orderedFood">
+    <fragment
+        android:id="@+id/orderedFood"
+        android:name="com.codingwithrufat.deliveryapplication.fragments.clients.OrderedFood"
+        android:label="fragment_ordered_food"
+        tools:layout="@layout/fragment_ordered_food" >
+        <action
+            android:id="@+id/action_orderedFood_to_clientMapFragment"
+            app:destination="@id/clientMapFragment" />
+    </fragment>
     <fragment
         android:id="@+id/clientMapFragment"
         android:name="com.codingwithrufat.deliveryapplication.fragments.clients.ClientMapFragment"
         android:label="fragment_client_map"
         tools:layout="@layout/fragment_client_map" />
+
 
 </navigation>

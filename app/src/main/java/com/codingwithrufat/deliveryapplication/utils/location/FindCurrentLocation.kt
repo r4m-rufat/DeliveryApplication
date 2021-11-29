@@ -1,4 +1,4 @@
-package com.codingwithrufat.deliveryapplication.activities
+package com.codingwithrufat.deliveryapplication.utils.location
 
 import android.Manifest
 import android.annotation.SuppressLint

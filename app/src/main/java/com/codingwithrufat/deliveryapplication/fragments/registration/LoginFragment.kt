@@ -1,16 +1,31 @@
 package com.codingwithrufat.deliveryapplication.fragments.registration
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
+import com.codingwithrufat.deliveryapplication.activities.ClientActivity
 import com.codingwithrufat.deliveryapplication.utils.conditions.checkLoginFields
 import com.codingwithrufat.deliveryapplication.utils.conditions.isPhoneNumberInDatabaseOrNot
+import com.google.android.gms.location.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.fragment_login.view.*
 
 class LoginFragment : Fragment() {
@@ -72,7 +87,7 @@ class LoginFragment : Fragment() {
                 isPhoneNumberInDatabaseOrNot(
                     db,
                     phone_number,
-                    type,
+                    "${type}s",
                     isInDB = {
 
                         db.collection("${type}s")
@@ -82,9 +97,8 @@ class LoginFragment : Fragment() {
                             .addOnCompleteListener { task ->
 
                                 if (task.isSuccessful && !task.result!!.isEmpty) {
-
-                                    // TODO pass the next page (Home Page)
-
+                                var intent=Intent(context,ClientActivity::class.java)
+                                    startActivity(intent)
                                 } else {
                                     Toast.makeText(
                                         requireContext(),
@@ -124,5 +138,6 @@ class LoginFragment : Fragment() {
         }
 
     }
+
 
 }
