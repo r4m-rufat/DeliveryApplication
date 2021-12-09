@@ -88,6 +88,8 @@ class LoginFragment : Fragment() {
                                     startActivity(Intent(requireContext(), ClientActivity::class.java))
                                     requireActivity().finish()
 
+                                var intent=Intent(context,ClientActivity::class.java)
+                                    startActivity(intent)
                                 } else {
                                     Toast.makeText(
                                         requireContext(),
@@ -127,5 +129,6 @@ class LoginFragment : Fragment() {
         }
 
     }
+
 
 }

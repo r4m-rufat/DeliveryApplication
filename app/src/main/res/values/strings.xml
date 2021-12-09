@@ -22,6 +22,8 @@
     <string name="new_password">New Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="couriers">Couriers</string>
+    <string name="submit">Submit</string>
+    <string name="foods">Foods</string>
 
     <string-array name="spinner_items">
         <item>Client</item>

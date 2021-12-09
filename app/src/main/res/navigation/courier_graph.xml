@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/courier_graph"
+    app:startDestination="@id/courierMapFragment">
+
+
+    <fragment
+        android:id="@+id/courierMapFragment"
+        android:name="com.codingwithrufat.deliveryapplication.fragments.couriers.CourierMapFragment"
+        android:label="fragment_courier_map"
+        tools:layout="@layout/fragment_courier_map" />
+</navigation>
