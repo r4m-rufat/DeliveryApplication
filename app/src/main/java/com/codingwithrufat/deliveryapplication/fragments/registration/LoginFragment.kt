@@ -2,6 +2,8 @@ package com.codingwithrufat.deliveryapplication.fragments.registration
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +12,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
 import com.codingwithrufat.deliveryapplication.activities.ClientActivity
+import com.codingwithrufat.deliveryapplication.activities.CourierActivity
+import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
 import com.codingwithrufat.deliveryapplication.utils.conditions.checkLoginFields
 import com.codingwithrufat.deliveryapplication.utils.conditions.isPhoneNumberInDatabaseOrNot
+import com.codingwithrufat.deliveryapplication.utils.constants.TAG
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.fragment_login.view.*
 
 class LoginFragment : Fragment() {
@@ -84,12 +96,26 @@ class LoginFragment : Fragment() {
                             .addOnCompleteListener { task ->
 
                                 if (task.isSuccessful && !task.result!!.isEmpty) {
+                                    update_tokens()
+                                    if (type=="Client") {
+                                        startActivity(
+                                            Intent(
+                                                requireContext(),
+                                                ClientActivity::class.java
+                                            )
+                                        )
+                                        requireActivity().finish()
+                                    }
+                                    if (type=="Courier") {
+                                        startActivity(
+                                            Intent(
+                                                requireContext(),
+                                                CourierActivity::class.java
+                                            )
+                                        )
+                                        requireActivity().finish()
+                                    }
 
-                                    startActivity(Intent(requireContext(), ClientActivity::class.java))
-                                    requireActivity().finish()
-
-                                var intent=Intent(context,ClientActivity::class.java)
-                                    startActivity(intent)
                                 } else {
                                     Toast.makeText(
                                         requireContext(),
@@ -128,6 +154,34 @@ class LoginFragment : Fragment() {
 
         }
 
+    }
+
+    private fun update_tokens() {
+
+        // objects
+        var firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
+        var userid=firebaseAuth?.currentUser?.uid
+        var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+        var data_ref=firebaseDatabase.reference
+
+       // add to database login device token
+        data_ref.child("Couriers").child(userid.toString()).addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val value = snapshot.getValue(CourierDetail::class.java)
+                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+                    if (!it.result.token.contains(it.result.token)){
+                       value?.token?.add(it.result.token)
+
+                    }
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+               Log.d(TAG,"Error: "+error.message)
+            }
+
+        })
     }
 
 

@@ -1,6 +1,7 @@
 package com.codingwithrufat.deliveryapplication.fragments.registration
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -12,9 +13,11 @@ import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
 import com.codingwithrufat.deliveryapplication.utils.conditions.checkingRegistrationFields
 import com.codingwithrufat.deliveryapplication.utils.conditions.isPhoneNumberInDatabaseOrNot
+import com.codingwithrufat.deliveryapplication.utils.constants.TAG
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.fragment_register.view.*
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +40,6 @@ class RegisterFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_register, container, false)
-
         firebaseUser = FirebaseAuth.getInstance().currentUser
         db = FirebaseFirestore.getInstance()
 

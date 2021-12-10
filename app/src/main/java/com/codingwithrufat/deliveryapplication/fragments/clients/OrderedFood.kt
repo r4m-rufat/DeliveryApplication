@@ -11,14 +11,26 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
-import com.codingwithrufat.deliveryapplication.activities.MainActivity
 import com.codingwithrufat.deliveryapplication.models.food_properties.FoodProperty
+import com.codingwithrufat.deliveryapplication.notifications.FcmNotificationsSender
 import com.codingwithrufat.deliveryapplication.utils.constants.TAG
 import com.codingwithrufat.deliveryapplication.utils.prefence.MyPrefence
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_ordered_food.view.*
+import kotlin.collections.HashMap
+import com.codingwithrufat.deliveryapplication.activities.MainActivity
+import com.google.firebase.database.DatabaseError
+import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.ValueEventListener
+
+
+
+
+
+
 
 
 class OrderedFood :Fragment() {
@@ -41,6 +53,7 @@ class OrderedFood :Fragment() {
     var data_ref=firebaseDatabase.reference
     lateinit var firebaseFirestore: FirebaseFirestore
     lateinit var prefence: MyPrefence
+    lateinit var deviceToken:String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,13 +74,56 @@ class OrderedFood :Fragment() {
         prefence= MyPrefence(context)
 
         view.submit.setOnClickListener {
-            data_setfoods(view)
+            food_name=view.product_name.text.toString()
+            data_setfoods(view,food_name!!)
             update_client_data(view)
+            sendnotification_tocouriers(food_name!!)
         }
         view.ic_backFromOrderedFood.setOnClickListener {
             startActivity(Intent(context,MainActivity::class.java))
+            firebaseAuth.signOut()
         }
         return view
+    }
+
+    private fun sendnotification_tocouriers(food_name: String) {
+        //find courier user ids
+        firebaseFirestore.collection("Couriers").addSnapshotListener { query,error ->
+            for (i in 0 until query?.documents?.size!! ){
+                var userId:String=query.documents[i].getString("id").toString()
+                //find courier tokens
+                data_ref.child("Couriers").child(userId).addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val value = snapshot.getValue(CourierDetail::class.java)
+                        for (j in 0 until value?.token?.size!!) {
+                            deviceToken = value.token!![i]
+                            var busy = value?.busy
+                            //notification sending only not busy couriers
+                            if (busy == false) {
+                                val notificationsSender = FcmNotificationsSender(
+                                    deviceToken,
+                                    "New Order",
+                                    "Someone wants " + food_name,
+                                    requireContext(),
+                                    requireActivity()
+                                )
+                                notificationsSender.SendNotifications()
+
+                            }
+                        }
+
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d(TAG,"Error:"+error.message)
+                    }
+
+                })
+
+            }
+        }
+
+
     }
 
     private fun update_client_data(view: View) {
@@ -90,9 +146,7 @@ class OrderedFood :Fragment() {
 
     }
 
-    private fun data_setfoods(view:View) {
-
-            food_name=view.product_name.text.toString()
+    private fun data_setfoods(view: View, food_name: String) {
             food_heigth=view.product_heigth.text.toString()
             food_weight=view.product_length.text.toString()
             food_width=view.product_width.text.toString()
@@ -110,7 +164,7 @@ class OrderedFood :Fragment() {
             else {
                 val foods_property = FoodProperty(
                     food_id,
-                    food_name,
+                    this.food_name,
                     food_weight,
                     food_heigth,
                     food_width,
