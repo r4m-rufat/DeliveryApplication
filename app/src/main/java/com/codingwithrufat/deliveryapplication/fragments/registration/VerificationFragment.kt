@@ -1,5 +1,6 @@
 package com.codingwithrufat.deliveryapplication.fragments.registration
 
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
@@ -10,20 +11,21 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.codingwithrufat.deliveryapplication.R
-import com.codingwithrufat.deliveryapplication.utils.location.FindCurrentLocation
+import com.codingwithrufat.deliveryapplication.activities.ClientActivity
+import com.codingwithrufat.deliveryapplication.activities.CourierActivity
 import com.codingwithrufat.deliveryapplication.models.users.User
 import com.codingwithrufat.deliveryapplication.models.users_detail.ClientDetail
 import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
 import com.codingwithrufat.deliveryapplication.utils.constants.ONE_MINUTE_TIME
 import com.codingwithrufat.deliveryapplication.utils.constants.SECOND_MS
 import com.codingwithrufat.deliveryapplication.utils.constants.TAG
+import com.codingwithrufat.deliveryapplication.utils.location.FindCurrentLocation
 import com.codingwithrufat.deliveryapplication.utils.prefence.MyPrefence
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.fragment_verification.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -42,24 +44,25 @@ class VerificationFragment : Fragment() {
     private var is_coming_from_reset_fragment: Boolean? = null
 
     //variables for courier database
-    private var courier_latitude:Double?=null
-    private var courier_longitude:Double?=null
-    private var busy :Boolean?=false
-    private var food_id:String?=null
-    private var destination_latitude:Double?=null
-    private var destination_longitude:Double?=null
-    var devicestoken= arrayListOf<String>()
+    private var courier_latitude: Double? = null
+    private var courier_longitude: Double? = null
+    private var busy: Boolean? = false
+    private var food_id: String? = null
+    private var destination_latitude: Double? = null
+    private var destination_longitude: Double? = null
+    var devicestoken = arrayListOf<String>()
+
     //variables for client database
-    private var food_id_list:List<String>?=null
+    private var food_id_list: List<String>? = null
     var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-    var data_ref=firebaseDatabase.reference
+    var data_ref = firebaseDatabase.reference
 
     // objects
     private var firebaseAuth: FirebaseAuth? = null
     private lateinit var firebaseFirestore: FirebaseFirestore
     private lateinit var firebaseUser: FirebaseUser
     private lateinit var mylocation: FindCurrentLocation
-    private  lateinit var prefence: MyPrefence
+    private lateinit var prefence: MyPrefence
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -85,8 +88,8 @@ class VerificationFragment : Fragment() {
         // initialize
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseFirestore = FirebaseFirestore.getInstance()
-        mylocation= FindCurrentLocation(context)
-        prefence= MyPrefence(context)
+        mylocation = FindCurrentLocation(context)
+        prefence = MyPrefence(context)
 
         clickedVerifyProceedButton(view)
         setPhoneNumber(view)
@@ -179,30 +182,31 @@ class VerificationFragment : Fragment() {
     }
 
     private fun data_setclients() {
-        val client_id=firebaseAuth?.currentUser?.uid
+        val client_id = firebaseAuth?.currentUser?.uid
         mylocation.fetch(context)
-        val client_latitude=1.0
-        val client_longitude=1.0
+        val client_latitude = 1.0
+        val client_longitude = 1.0
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
             devicestoken.add(it.result.token)
             food_id_list = listOf("")
-            if (client_latitude != null && client_longitude != null) {
-                val clients = ClientDetail(
-                    client_id,
-                    devicestoken,
-                    client_latitude,
-                    client_longitude,
-                    food_id_list
-                )
-                data_ref.child("Clients").child(client_id.toString()).setValue(clients)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d(TAG, "Successfully set")
-                        } else {
-                            Log.d(TAG, task.exception.message.toString())
-                        }
+
+            val clients = ClientDetail(
+                client_id,
+                devicestoken,
+                client_latitude,
+                client_longitude,
+                food_id_list
+            )
+            data_ref.child("Clients").child(client_id.toString()).setValue(clients)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "Successfully set")
+                        startActivity(Intent(requireContext(), ClientActivity::class.java))
+                    } else {
+                        Log.d(TAG, task.exception.message.toString())
                     }
-            }
+                }
+
 
         }
 
@@ -211,13 +215,13 @@ class VerificationFragment : Fragment() {
 
     private fun data_setcouriers() {
 
-        val courier_id=firebaseAuth?.currentUser?.uid
+        val courier_id = firebaseAuth?.currentUser?.uid
         mylocation.fetch(context)
-        courier_latitude=prefence.getString("latitude")?.toDouble()
-        courier_longitude=prefence.getString("longitude")?.toDouble()
-        food_id=""
-        destination_latitude=0.0
-        destination_longitude=0.0
+        courier_latitude = prefence.getString("latitude")?.toDouble()
+        courier_longitude = prefence.getString("longitude")?.toDouble()
+        food_id = ""
+        destination_latitude = 0.0
+        destination_longitude = 0.0
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
             devicestoken.add(it.result.token)
             if (courier_latitude != null && courier_longitude != null) {
@@ -235,6 +239,7 @@ class VerificationFragment : Fragment() {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d("TAG", "Successfully set")
+                            startActivity(Intent(requireContext(), CourierActivity::class.java))
                         } else {
                             Log.d("TAG", task.exception.message.toString())
                         }
@@ -244,7 +249,6 @@ class VerificationFragment : Fragment() {
         }
 
     }
-
 
 
     private fun verifyPhoneNumber(view: View, credential: PhoneAuthCredential) {

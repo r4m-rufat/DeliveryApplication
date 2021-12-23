@@ -14,7 +14,6 @@ import android.os.Vibrator
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.codingwithrufat.deliveryapplication.activities.CourierActivity
-import com.codingwithrufat.deliveryapplication.fragments.couriers.CourierMapFragment
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -24,14 +23,12 @@ class FirebaseMessagingService : FirebaseMessagingService() {
     var mNotificationManager: NotificationManager? = null
     override fun onNewToken(token: String?) {
         super.onNewToken(token)
-
     }
 
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
 
         // playing audio and vibration
         val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -76,8 +73,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             builder.setChannelId(channelId)
         }
 
-
-// notificationId is a unique int for each notification that you must define
+        // notificationId is a unique int for each notification that you must define
         mNotificationManager!!.notify(100, builder.build())
     }
 

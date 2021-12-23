@@ -34,7 +34,7 @@ class FcmNotificationsSender(
             notiObject.put("body", body)
             mainObj.put("notification", notiObject)
             val request: JsonObjectRequest = object : JsonObjectRequest(
-                Request.Method.POST,
+                Method.POST,
                 postUrl,
                 mainObj,
                 object : Response.Listener<JSONObject?>{
@@ -59,7 +59,6 @@ class FcmNotificationsSender(
             requestQueue.add(request)
         } catch (e: JSONException) {
             e.printStackTrace()
-
         }
     }
 
