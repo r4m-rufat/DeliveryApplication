@@ -96,7 +96,7 @@ class LoginFragment : Fragment() {
                             .addOnCompleteListener { task ->
 
                                 if (task.isSuccessful && !task.result!!.isEmpty) {
-                                    update_tokens()
+                                    update_tokens(type)
                                     if (type=="Client") {
                                         startActivity(
                                             Intent(
@@ -156,33 +156,39 @@ class LoginFragment : Fragment() {
 
     }
 
-    private fun update_tokens() {
+    private fun update_tokens(type:String) {
 
         // objects
         var firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
         var userid=firebaseAuth?.currentUser?.uid
         var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
         var data_ref=firebaseDatabase.reference
+        val updateFbDb: HashMap<String, Any> = HashMap()
 
        // add to database login device token
-        data_ref.child("Couriers").child(userid.toString()).addValueEventListener(object:ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val value = snapshot.getValue(CourierDetail::class.java)
-                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-                    if (!it.result.token.contains(it.result.token)){
-                       value?.token?.add(it.result.token)
+
+            data_ref.child("${type}s").child(userid.toString()).addValueEventListener(object:ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val value = snapshot.getValue(CourierDetail::class.java)
+                    FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+                        updateFbDb.put(value?.token.toString(), it.result.token)
+                        data_ref.child("${type}s").child(userid.toString()).updateChildren(updateFbDb).addOnSuccessListener {
+                            Log.d(TAG,"Succesfully updated")
+
+                        }
 
                     }
+
                 }
 
-            }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d(TAG,"Error: "+error.message)
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-               Log.d(TAG,"Error: "+error.message)
-            }
+            })
+        }
 
-        })
+
     }
 
 
-}

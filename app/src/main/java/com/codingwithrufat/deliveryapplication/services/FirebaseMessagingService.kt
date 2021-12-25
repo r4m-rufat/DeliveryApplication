@@ -47,11 +47,12 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         builder.setSmallIcon(R.mipmap.ic_launcher)
 
 
-        val resultIntent = Intent(this,CourierActivity::class.java)
+        val resultIntent = Intent(this,CourierActivity ::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this, 1, resultIntent, FLAG_UPDATE_CURRENT)
         builder.setContentTitle(remoteMessage.notification!!.title)
-        builder.setContentText(remoteMessage.notification!!.body)
+        var notificationBody=remoteMessage.notification!!.body
+        builder.setContentText(notificationBody?.substring(0,notificationBody.indexOf(":")))
         builder.setContentIntent(pendingIntent)
         builder.setStyle(
             NotificationCompat.BigTextStyle().bigText(

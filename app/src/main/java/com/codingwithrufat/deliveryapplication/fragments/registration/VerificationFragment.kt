@@ -50,10 +50,10 @@ class VerificationFragment : Fragment() {
     private var food_id: String? = null
     private var destination_latitude: Double? = null
     private var destination_longitude: Double? = null
-    var devicestoken = arrayListOf<String>()
+    private var devicestoken:String?=null
 
     //variables for client database
-    private var food_id_list: List<String>? = null
+    private var food_id_list: ArrayList<String>? = null
     var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     var data_ref = firebaseDatabase.reference
 
@@ -187,8 +187,8 @@ class VerificationFragment : Fragment() {
         val client_latitude = 1.0
         val client_longitude = 1.0
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            devicestoken.add(it.result.token)
-            food_id_list = listOf("")
+            devicestoken=it.result.token
+            food_id_list= arrayListOf("")
 
             val clients = ClientDetail(
                 client_id,
@@ -223,7 +223,7 @@ class VerificationFragment : Fragment() {
         destination_latitude = 0.0
         destination_longitude = 0.0
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            devicestoken.add(it.result.token)
+            devicestoken=it.result.token
             if (courier_latitude != null && courier_longitude != null) {
                 val couriers = CourierDetail(
                     courier_id,

@@ -2,7 +2,7 @@ package com.codingwithrufat.deliveryapplication.models.users_detail
 
 data class CourierDetail(
     var courier_id: String? = null,
-    var token: ArrayList<String>?=null,
+    var token: String? =null,
     var courier_latitude: Double? = null,
     var courier_longitude: Double? = null,
     var busy: Boolean? = null,

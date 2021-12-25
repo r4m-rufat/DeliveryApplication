@@ -21,16 +21,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_ordered_food.view.*
 import kotlin.collections.HashMap
 import com.codingwithrufat.deliveryapplication.activities.MainActivity
+import com.codingwithrufat.deliveryapplication.models.users_detail.ClientDetail
 import com.google.firebase.database.DatabaseError
 import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
-
-
-
-
-
-
 
 
 class OrderedFood :Fragment() {
@@ -38,6 +33,8 @@ class OrderedFood :Fragment() {
     //variables
     private var source_latitude:Double?=null
     private var source_longitude:Double?=null
+    private var client_id:String?=null
+    private var courier_id:String?=null
     private var food_name:String?=null
     private var food_heigth:String?=null
     private var food_length:String?=null
@@ -75,9 +72,10 @@ class OrderedFood :Fragment() {
 
         view.submit.setOnClickListener {
             food_name=view.product_name.text.toString()
-            data_setfoods(view,food_name!!)
-            update_client_data(view)
-            sendnotification_tocouriers(food_name!!)
+            food_id= data_ref.push().key
+            data_setfoods(view,food_name!!,food_id!!)
+            update_client_data(view,food_id!!)
+            sendnotification_tocouriers(food_name!!,food_id!!)
         }
         view.ic_backFromOrderedFood.setOnClickListener {
             startActivity(Intent(context,MainActivity::class.java))
@@ -86,7 +84,7 @@ class OrderedFood :Fragment() {
         return view
     }
 
-    private fun sendnotification_tocouriers(food_name: String) {
+    private fun sendnotification_tocouriers(food_name: String, food_id: String) {
         //find courier user ids
         firebaseFirestore.collection("Couriers").addSnapshotListener { query,error ->
             for (i in 0 until query?.documents?.size!! ){
@@ -95,21 +93,20 @@ class OrderedFood :Fragment() {
                 data_ref.child("Couriers").child(userId).addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val value = snapshot.getValue(CourierDetail::class.java)
-                        for (j in 0 until value?.token?.size!!) {
-                            deviceToken = value.token!![i]
-                            var busy = value?.busy
+                            deviceToken = value?.token!!
+                            val busy = value.busy
                             //notification sending only not busy couriers
                             if (busy == false) {
                                 val notificationsSender = FcmNotificationsSender(
                                     deviceToken,
                                     "New Order",
-                                    "Someone wants " + food_name,
+                                    "Someone wants " + food_name+":"+food_id,
                                     requireContext(),
                                     requireActivity()
                                 )
                                 notificationsSender.SendNotifications()
 
-                            }
+
                         }
 
                     }
@@ -126,11 +123,25 @@ class OrderedFood :Fragment() {
 
     }
 
-    private fun update_client_data(view: View) {
+    private fun update_client_data(view: View, food_id: String) {
         val longitude=prefence.getString("longitude")?.toDouble()
         val latitude=prefence.getString("latitude")?.toDouble()
         val updateFbDb: HashMap<String, Any> = HashMap()
         val userID=firebaseAuth.currentUser?.uid
+
+        //add food ids
+        data_ref.child("Clients").child(userID.toString()).addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val value = snapshot.getValue(ClientDetail::class.java)
+                value?.food_id?.add(food_id)
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d(TAG,"Error: "+error.message)
+            }
+
+        })
 
         if (latitude != null && longitude != null) {
             updateFbDb.put("client_latitude", latitude)
@@ -146,24 +157,26 @@ class OrderedFood :Fragment() {
 
     }
 
-    private fun data_setfoods(view: View, food_name: String) {
+    private fun data_setfoods(view: View, food_name: String, food_id: String) {
             food_heigth=view.product_heigth.text.toString()
             food_weight=view.product_length.text.toString()
             food_width=view.product_width.text.toString()
             food_length=view.product_length.text.toString()
+            client_id=firebaseAuth.currentUser?.uid.toString()
             source_latitude=0.0
             source_longitude=0.0
-            destination_latitude=0.0
-            destination_longitude=0.0
+            destination_latitude=prefence.getString("latitude")?.toDouble()
+            destination_longitude=prefence.getString("longitude")?.toDouble()
             order_time=""
-            food_id= data_ref.push().key
             if (TextUtils.isEmpty(food_name) || TextUtils.isEmpty(food_heigth) || TextUtils.isEmpty(food_weight) ||
                 TextUtils.isEmpty(food_width) || TextUtils.isEmpty(food_length)){
                 Toast.makeText(context,"Please fill all boxes",Toast.LENGTH_LONG).show()
             }
             else {
                 val foods_property = FoodProperty(
-                    food_id,
+                    this.food_id,
+                    client_id,
+                    courier_id,
                     this.food_name,
                     food_weight,
                     food_heigth,
@@ -175,7 +188,7 @@ class OrderedFood :Fragment() {
                     destination_longitude,
                     destination_latitude
                 )
-                data_ref.child("Foods").child(food_id.toString()).setValue(foods_property)
+                data_ref.child("Foods").child(food_id).setValue(foods_property)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d(TAG, "Successfully set")
