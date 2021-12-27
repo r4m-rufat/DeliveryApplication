@@ -5,9 +5,11 @@
       <map>
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/drawable/ic_google.xml" value="0.290625" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/drawable/selector_for_edit_password.xml" value="0.23425925925925925" />
+        <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/activity_client.xml" value="0.1" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/activity_main.xml" value="0.27447916666666666" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/activity_splash.xml" value="0.20677083333333332" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/fragment_login.xml" value="0.27447916666666666" />
+        <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/fragment_ordered_food.xml" value="0.27447916666666666" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/fragment_register.xml" value="0.176" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/fragment_reset_password.xml" value="0.2" />
         <entry key="..\:/Android Files/DeliveryApplication/app/src/main/res/layout/fragment_verification.xml" value="0.4342105263157895" />

@@ -47,11 +47,16 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         builder.setSmallIcon(R.mipmap.ic_launcher)
 
 
-        val resultIntent = Intent(this,CourierActivity::class.java)
+        val resultIntent = Intent(applicationContext,CourierActivity::class.java)
+
+        resultIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+
+        resultIntent.putExtra("user_id", remoteMessage.notification!!.body!!.split(':')[1]) // this one is client_id
         val pendingIntent =
-            PendingIntent.getActivity(this, 1, resultIntent, FLAG_UPDATE_CURRENT)
+            PendingIntent.getActivity(this,
+                System.currentTimeMillis().toInt(), resultIntent, FLAG_UPDATE_CURRENT)
         builder.setContentTitle(remoteMessage.notification!!.title)
-        builder.setContentText(remoteMessage.notification!!.body)
+        builder.setContentText(remoteMessage.notification!!.body!!.split(':')[0]) // consist of two part ['food' : 'client_id']
         builder.setContentIntent(pendingIntent)
         builder.setStyle(
             NotificationCompat.BigTextStyle().bigText(

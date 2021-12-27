@@ -14,6 +14,8 @@ import com.codingwithrufat.deliveryapplication.R
 import com.codingwithrufat.deliveryapplication.utils.conditions.checkingRegistrationFields
 import com.codingwithrufat.deliveryapplication.utils.conditions.isPhoneNumberInDatabaseOrNot
 import com.codingwithrufat.deliveryapplication.utils.constants.TAG
+import com.codingwithrufat.deliveryapplication.utils.location.FindCurrentLocation
+import com.codingwithrufat.deliveryapplication.utils.prefence.MyPrefence
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,8 +26,8 @@ import java.util.concurrent.TimeUnit
 
 class RegisterFragment : Fragment() {
 
-    private var firebaseUser: FirebaseUser? = null
     private lateinit var db: FirebaseFirestore
+    private lateinit var preferenceManager: MyPrefence
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +42,10 @@ class RegisterFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_register, container, false)
-        firebaseUser = FirebaseAuth.getInstance().currentUser
         db = FirebaseFirestore.getInstance()
+        preferenceManager = MyPrefence(requireContext())
+
+        FindCurrentLocation(requireContext()).fetch(context)
 
         clickedSignInButton(view)
         clickedSignUpButton(view)
@@ -144,11 +148,7 @@ class RegisterFragment : Fragment() {
     private fun signInWithCredential(credential: PhoneAuthCredential) {
 
         FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
-            if (it.isSuccessful) {
-
-                firebaseUser = it.result!!.user!!
-
-            } else {
+            if (!it.isSuccessful) {
 
                 Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
 

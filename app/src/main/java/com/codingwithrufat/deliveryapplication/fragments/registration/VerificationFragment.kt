@@ -134,6 +134,8 @@ class VerificationFragment : Fragment() {
 
                     val id = task.result?.user!!.uid
 
+                    prefence.setString("user_id", id) // user_id store the internal storage
+
                     val user = User(
                         id,
                         phone_number,
@@ -154,6 +156,7 @@ class VerificationFragment : Fragment() {
                             .addOnFailureListener {
                                 Log.d(TAG, "signInWithPhoneAuthCredential: Error is ${it.message}")
                             }
+
                     } else {
 
                         firebaseFirestore.collection(getString(R.string.couriers))
@@ -182,17 +185,17 @@ class VerificationFragment : Fragment() {
     }
 
     private fun data_setclients() {
-        val client_id = firebaseAuth?.currentUser?.uid
+        val client_id = prefence.getString("user_id")
         mylocation.fetch(context)
-        val client_latitude = 1.0
-        val client_longitude = 1.0
+        val client_latitude = prefence.getString("latitude")?.toDouble()
+        val client_longitude = prefence.getString("longitude")?.toDouble()
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            devicestoken.add(it.result.token)
+
             food_id_list = listOf("")
 
             val clients = ClientDetail(
                 client_id,
-                devicestoken,
+                it.result.token,
                 client_latitude,
                 client_longitude,
                 food_id_list
@@ -207,7 +210,6 @@ class VerificationFragment : Fragment() {
                     }
                 }
 
-
         }
 
     }
@@ -215,19 +217,17 @@ class VerificationFragment : Fragment() {
 
     private fun data_setcouriers() {
 
-        val courier_id = firebaseAuth?.currentUser?.uid
-        mylocation.fetch(context)
+        val courier_id = prefence.getString("user_id")
         courier_latitude = prefence.getString("latitude")?.toDouble()
         courier_longitude = prefence.getString("longitude")?.toDouble()
         food_id = ""
         destination_latitude = 0.0
         destination_longitude = 0.0
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            devicestoken.add(it.result.token)
             if (courier_latitude != null && courier_longitude != null) {
                 val couriers = CourierDetail(
                     courier_id,
-                    devicestoken,
+                    it.result.token,
                     courier_latitude,
                     courier_longitude,
                     busy,
@@ -267,6 +267,7 @@ class VerificationFragment : Fragment() {
 
                 } else {
                     view.rel_progress_verification.visibility = View.INVISIBLE
+
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         Toast.makeText(context, "Verification code is invalid", Toast.LENGTH_SHORT)
                             .show()
@@ -277,6 +278,7 @@ class VerificationFragment : Fragment() {
                 view.rel_progress_verification.visibility = View.INVISIBLE
                 Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
+
     }
 
 

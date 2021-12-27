@@ -153,21 +153,6 @@
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/button_sign_in"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp"
-            android:backgroundTint="#fff"
-            android:drawableLeft="@drawable/ic_google"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:text="@string/sign_in_with_google"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
-
 
         <LinearLayout
             android:layout_width="match_parent"

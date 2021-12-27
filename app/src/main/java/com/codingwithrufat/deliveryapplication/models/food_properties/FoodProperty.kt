@@ -2,6 +2,7 @@ package com.codingwithrufat.deliveryapplication.models.food_properties
 
 data class FoodProperty(
     var food_id:String?,
+    var client_id: String?,
     var food_name:String?,
     var food_weight:String?,
     var food_heigth:String?,

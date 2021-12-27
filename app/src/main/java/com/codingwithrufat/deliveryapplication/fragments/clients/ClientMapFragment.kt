@@ -7,11 +7,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.codingwithrufat.deliveryapplication.R
-import com.codingwithrufat.deliveryapplication.models.users_detail.ClientDetail
 import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
 import com.codingwithrufat.deliveryapplication.utils.constants.MAP_REQUEST_CODE
 import com.google.android.gms.location.LocationServices
@@ -22,7 +20,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -54,12 +51,6 @@ class ClientMapFragment : Fragment(), OnMapReadyCallback{
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_client_map, container, false)
-
-        if(FirebaseAuth.getInstance().currentUser != null){
-            Toast.makeText(requireContext(), "null deyil", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(requireContext(), "nulldi", Toast.LENGTH_SHORT).show()
-        }
 
         val fusedLocationProvider = LocationServices.getFusedLocationProviderClient(requireContext())
         val mapFragment = childFragmentManager.findFragmentById(R.id.client_map) as SupportMapFragment

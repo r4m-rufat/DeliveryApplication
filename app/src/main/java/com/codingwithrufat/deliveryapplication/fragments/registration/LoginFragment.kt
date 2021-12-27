@@ -2,7 +2,6 @@ package com.codingwithrufat.deliveryapplication.fragments.registration
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,8 +16,7 @@ import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
 import com.codingwithrufat.deliveryapplication.utils.conditions.checkLoginFields
 import com.codingwithrufat.deliveryapplication.utils.conditions.isPhoneNumberInDatabaseOrNot
 import com.codingwithrufat.deliveryapplication.utils.constants.TAG
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.codingwithrufat.deliveryapplication.utils.prefence.MyPrefence
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -31,6 +29,7 @@ class LoginFragment : Fragment() {
 
     // objects
     private lateinit var db: FirebaseFirestore
+    private lateinit var preferenceManager: MyPrefence
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,13 +45,16 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
+        preferenceManager = MyPrefence(requireContext())
+
         db = FirebaseFirestore.getInstance()
         clickedTexts(view)
         clickedLoginButton(view)
         clickedbackfromLogin(view)
         return view
     }
-    private fun clickedbackfromLogin(view:View){
+
+    private fun clickedbackfromLogin(view: View) {
         view.ic_backFromLogin.setOnClickListener {
             Navigation.findNavController(it)
                 .navigate(R.id.action_loginFragment_to_registerFragment)
@@ -96,23 +98,44 @@ class LoginFragment : Fragment() {
                             .addOnCompleteListener { task ->
 
                                 if (task.isSuccessful && !task.result!!.isEmpty) {
-                                    update_tokens()
-                                    if (type=="Client") {
+
+                                    if (type == "Client") {
                                         startActivity(
                                             Intent(
                                                 requireContext(),
                                                 ClientActivity::class.java
                                             )
                                         )
+
+                                        task.result.forEach {
+                                            preferenceManager.setString(
+                                                "user_id",
+                                                it.getString("id")!!
+                                            )
+                                        }
+
+                                        update_tokens("Clients")
+
                                         requireActivity().finish()
                                     }
-                                    if (type=="Courier") {
+                                    if (type == "Courier") {
+
+                                        task.result.forEach {
+                                            preferenceManager.setString(
+                                                "user_id",
+                                                it.getString("id")!!
+                                            )
+                                        }
+
                                         startActivity(
                                             Intent(
                                                 requireContext(),
                                                 CourierActivity::class.java
                                             )
                                         )
+
+                                        update_tokens("Couriers")
+
                                         requireActivity().finish()
                                     }
 
@@ -156,33 +179,31 @@ class LoginFragment : Fragment() {
 
     }
 
-    private fun update_tokens() {
+    private fun update_tokens(type: String) {
 
         // objects
-        var firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
-        var userid=firebaseAuth?.currentUser?.uid
+        var userid = preferenceManager.getString("user_id")
         var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-        var data_ref=firebaseDatabase.reference
+        var data_ref = firebaseDatabase.reference
+        val updateFbDb: HashMap<String, Any> = HashMap()
 
-       // add to database login device token
-        data_ref.child("Couriers").child(userid.toString()).addValueEventListener(object:ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val value = snapshot.getValue(CourierDetail::class.java)
-                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-                    if (!it.result.token.contains(it.result.token)){
-                       value?.token?.add(it.result.token)
-
+        // add to database login device token
+        data_ref.child("$type").child(userid.toString())
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+                        updateFbDb["token"] = it.result.token
+                        data_ref.child("$type").child(userid.toString())
+                            .updateChildren(updateFbDb).addOnSuccessListener {
+                                Log.d(TAG, "Succesfully updated")
+                            }
                     }
+
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d(TAG, "Error: " + error.message)
                 }
 
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-               Log.d(TAG,"Error: "+error.message)
-            }
-
-        })
+            })
     }
-
-
 }

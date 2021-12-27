@@ -1,6 +1,7 @@
 package com.codingwithrufat.deliveryapplication.fragments.couriers
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -35,12 +36,13 @@ class CourierMapFragment : Fragment(), OnMapReadyCallback {
     private var firebaseDatabase = FirebaseDatabase.getInstance()
     private var reference = firebaseDatabase.reference
     private lateinit var googleMap: GoogleMap
+    private var client_id: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
+        client_id = requireActivity().intent.getStringExtra("user_id")
     }
+
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(
@@ -52,15 +54,19 @@ class CourierMapFragment : Fragment(), OnMapReadyCallback {
 
         val fusedLocationProvider = LocationServices.getFusedLocationProviderClient(requireContext())
         val mapFragment = childFragmentManager.findFragmentById(R.id.client_map) as SupportMapFragment
+
+
         if (isLocationPermissionGranted()){
             val locationTask = fusedLocationProvider.lastLocation
             locationTask.addOnSuccessListener { location ->
+
                 if (location != null){
 
                     currentLocation = location
                     mapFragment.getMapAsync(this)
 
                 }
+
             }
 
             CoroutineScope(Main).launch {
@@ -90,9 +96,11 @@ class CourierMapFragment : Fragment(), OnMapReadyCallback {
 
         }
 
-        return view;
+        return view
 
     }
+
+
 
     private fun isLocationPermissionGranted(): Boolean {
         return if (ActivityCompat.checkSelfPermission(
@@ -119,22 +127,24 @@ class CourierMapFragment : Fragment(), OnMapReadyCallback {
 
     private fun getClientLatLongFromDB(onComingClientData: (clientDetail: ClientDetail) -> Unit){
 
-        reference.child("Clients")
-            .child("AC9a0goFM9TQSVStOPHXzKWJAvo1")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+        if(client_id != null){
+            reference.child("Clients")
+                .child(client_id!!)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
 
-                    if (snapshot.exists()){
-                        onComingClientData(snapshot.getValue(ClientDetail::class.java)!!)
+                        if (snapshot.exists()){
+                            onComingClientData(snapshot.getValue(ClientDetail::class.java)!!)
+                        }
+
                     }
 
-                }
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
 
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-
-            })
+                })
+        }
 
     }
 
@@ -150,7 +160,7 @@ class CourierMapFragment : Fragment(), OnMapReadyCallback {
                 map.addMarker(
                     MarkerOptions()
                         .position(LatLng(client.client_latitude!!.toDouble(), client.client_longitude!!.toDouble()))
-                        .title("Courier")
+                        .title("Client")
                 )
 
         }
@@ -158,7 +168,7 @@ class CourierMapFragment : Fragment(), OnMapReadyCallback {
         map.addMarker(
             MarkerOptions()
                 .position(LatLng(currentLocation.latitude, currentLocation.longitude))
-                .title("Client")
+                .title("Courier")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_arrow))
                 .rotation(currentLocation.bearing) // rotate icon to the destination
         )
