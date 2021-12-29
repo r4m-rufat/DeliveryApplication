@@ -53,7 +53,7 @@ class VerificationFragment : Fragment() {
     var devicestoken = arrayListOf<String>()
 
     //variables for client database
-    private var food_id_list: List<String>? = null
+    private var ordered_food_id: String? = null
     var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     var data_ref = firebaseDatabase.reference
 
@@ -191,14 +191,14 @@ class VerificationFragment : Fragment() {
         val client_longitude = prefence.getString("longitude")?.toDouble()
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
 
-            food_id_list = listOf("")
+            ordered_food_id = ""
 
             val clients = ClientDetail(
                 client_id,
                 it.result.token,
                 client_latitude,
                 client_longitude,
-                food_id_list
+                ordered_food_id
             )
             data_ref.child("Clients").child(client_id.toString()).setValue(clients)
                 .addOnCompleteListener { task ->
@@ -247,7 +247,6 @@ class VerificationFragment : Fragment() {
                     }
             }
         }
-
     }
 
 
@@ -266,12 +265,14 @@ class VerificationFragment : Fragment() {
                         .navigate(R.id.action_verificationFragment_to_resetPasswordFragment, bundle)
 
                 } else {
+
                     view.rel_progress_verification.visibility = View.INVISIBLE
 
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         Toast.makeText(context, "Verification code is invalid", Toast.LENGTH_SHORT)
                             .show()
                     }
+
                 }
             }
             .addOnFailureListener {

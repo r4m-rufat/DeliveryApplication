@@ -17,9 +17,12 @@ class FcmNotificationsSender(
     var userFcmToken: String,
     var title: String,
     var body: String,
+    var client_id: String,
+    var food_id: String,
     mContext: Context,
     mActivity: Activity
 ) {
+
     var mContext: Context
     var mActivity: Activity
     lateinit  var requestQueue: RequestQueue
@@ -30,24 +33,21 @@ class FcmNotificationsSender(
         try {
             mainObj.put("to", userFcmToken)
             val notiObject = JSONObject()
+            val dataObject = JSONObject()
+            dataObject.put("client_id", client_id)
+            dataObject.put("food_id", food_id)
             notiObject.put("title", title)
             notiObject.put("body", body)
             mainObj.put("notification", notiObject)
+            mainObj.put("data", dataObject)
             val request: JsonObjectRequest = object : JsonObjectRequest(
                 Method.POST,
                 postUrl,
                 mainObj,
-                object : Response.Listener<JSONObject?>{
-                    override fun onResponse(response: JSONObject?) {
-
-                        // code run is got response
-                    }
+                Response.Listener<JSONObject?> {
+                    // code run is got response
                 },
-                object : Response.ErrorListener {
-                    override fun onErrorResponse(error: VolleyError?) {
-                        Log.d(TAG,"Error"+error?.message.toString())
-                    }
-                }) {
+                Response.ErrorListener { error -> Log.d(TAG,"Error"+error?.message.toString()) }) {
                 @Throws(AuthFailureError::class)
                 override fun getHeaders(): Map<String, String>? {
                     val header: MutableMap<String, String> = HashMap()

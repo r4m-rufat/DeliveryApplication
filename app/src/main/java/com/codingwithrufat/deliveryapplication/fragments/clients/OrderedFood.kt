@@ -16,6 +16,7 @@ import com.codingwithrufat.deliveryapplication.models.food_properties.FoodProper
 import com.codingwithrufat.deliveryapplication.models.users_detail.CourierDetail
 import com.codingwithrufat.deliveryapplication.notifications.FcmNotificationsSender
 import com.codingwithrufat.deliveryapplication.utils.constants.TAG
+import com.codingwithrufat.deliveryapplication.utils.location.FindCurrentLocation
 import com.codingwithrufat.deliveryapplication.utils.prefence.MyPrefence
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -98,17 +99,17 @@ class OrderedFood : Fragment() {
                                     val notificationsSender = FcmNotificationsSender(
                                         deviceToken,
                                         "New Order",
-                                        "Someone wants " + food_name + ":" + prefence.getString("user_id"),
+                                        "Someone wants $food_name",
+                                        prefence.getString("user_id")!!,
+                                        food_id!!,
                                         requireContext(),
                                         requireActivity()
                                     )
                                     notificationsSender.SendNotifications()
-
                                 }
                             }catch (e: NullPointerException){
                                 e.printStackTrace()
                             }
-
 
                         }
 
@@ -133,6 +134,7 @@ class OrderedFood : Fragment() {
         if (latitude != null && longitude != null) {
             updateFbDb.put("client_latitude", latitude)
             updateFbDb.put("client_longitude", longitude)
+            updateFbDb.put("food_id", food_id!!)
             data_ref.child("Clients").child(userID.toString()).updateChildren(updateFbDb)
                 .addOnSuccessListener {
                     Log.d(TAG, "Succesfully updated")
@@ -145,14 +147,15 @@ class OrderedFood : Fragment() {
     }
 
     private fun data_setfoods(view: View, food_name: String) {
+        FindCurrentLocation(requireContext()).fetch(requireContext()) // request to the location for getting client lat/long
         food_heigth = view.product_heigth.text.toString()
         food_weight = view.product_weigth.text.toString()
         food_width = view.product_width.text.toString()
         food_length = view.product_length.text.toString()
         source_latitude = 0.0
         source_longitude = 0.0
-        destination_latitude = 0.0
-        destination_longitude = 0.0
+        destination_latitude = prefence.getString("latitude")?.toDouble()
+        destination_longitude = prefence.getString("latitude")?.toDouble()
         order_time = ""
         food_id = data_ref.push().key
         if (TextUtils.isEmpty(food_name) || TextUtils.isEmpty(food_heigth) || TextUtils.isEmpty(

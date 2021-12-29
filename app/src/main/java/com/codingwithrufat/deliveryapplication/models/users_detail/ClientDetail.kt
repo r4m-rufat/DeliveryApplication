@@ -5,5 +5,5 @@ data class ClientDetail(
     var token: String? = null,
     var client_latitude: Double? = null,
     var client_longitude: Double? = null,
-    var food_id: List<String>? = null
+    var food_id: String? = null
 )

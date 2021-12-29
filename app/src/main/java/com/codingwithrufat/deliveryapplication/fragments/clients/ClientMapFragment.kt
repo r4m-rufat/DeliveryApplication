@@ -142,7 +142,4 @@ class ClientMapFragment : Fragment(), OnMapReadyCallback{
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(currentLocation.latitude, currentLocation.longitude), 15f))
     }
 
-
-
-
 }
